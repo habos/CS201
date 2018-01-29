@@ -177,10 +177,11 @@ int sizeSLL(SLL *items){
 }
 
 void displaySLL(SLL *items, FILE *p){
+	int i;
 	NODE *curNode = items->head;
-	fprintf(p, "The items are {");
+	fprintf(p, "{");
 	if(items->size != 0){
-		while(curNode->next != 0){
+		for(i = 0; i < items->size; i++){
 			items->display(p, curNode->value);
 			fprintf(p, ", ");
 			curNode = curNode->next;
@@ -190,10 +191,11 @@ void displaySLL(SLL *items, FILE *p){
 }
 
 void displaySLLdebug(SLL *items,FILE *p){
+	int i;
 	NODE *curNode = items->head;
 	fprintf(p, "head->{");
 	if(items->size != 0){
-		while(curNode->next != 0){
+		for(i = 0; i < items->size; i++){
 			items->display(p, curNode->value);
 			fprintf(p, ", ");
 			curNode = curNode->next;
