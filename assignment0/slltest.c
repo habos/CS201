@@ -16,8 +16,10 @@
        SLL *items = newSLL(displayINTEGER,freeINTEGER);
        showItems(items);
        insertSLL(items,0,newINTEGER(3));
+	showItems(items);
 	printf("..\n");                   //insert at front
        insertSLL(items,sizeSLL(items),newINTEGER(2));
+	showItems(items);
 	printf("..\n");      //insert at back
        insertSLL(items,1,newINTEGER(1)); 
 	printf("..\n");                  //insert at middle

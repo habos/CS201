@@ -75,12 +75,6 @@ void *removeSLL(SLL *items, int index){
 	int i = 0;
 	//Check in node to be removed is head node
 	if(index == 0){
-		//Check removal will make list empty
-		if(items->head->next == 0){
-			free(curNode);
-			items->head = 0;
-			items->size--;
-		}
 		items->head = items->head->next;
 		temp = curNode->value;
 		items->free(curNode->value);
@@ -116,15 +110,23 @@ void *removeSLL(SLL *items, int index){
 }//end removeSLL
 
 void unionSLL(SLL *recipient, SLL *donor){
+	void *temp = 0;
+	int i;
 	//Check if either SLL is empty
-	if(recipient->size == 0 || donor->size == 0){return;}
+	if(donor->size == 0){return;}
 	//Make tail of recipient point to head of donor
-	recipient->tail->next = donor->head;
+	if(recipient->size == 0){
+		recipient->head = donor->head;
+	}else{
+		recipient->tail->next = donor->head;
+	}
 	//Set new tail and size
 	recipient->tail = donor->tail;
 	recipient->size += donor->size;
-	//Free donor sll
-	freeSLL(donor);
+	//Remove all the nodes from the donor
+	for(i = 0; i < donor->size; i++){
+		temp = removeSLL(donor, i);
+	}
 }
 
 void *getSLL(SLL *items, int index){
@@ -154,6 +156,7 @@ void *setSLL(SLL *items, int index, void *value){
 		newNode->value = value;
                 items->tail->next = newNode;
                 items->tail = newNode;
+		newNode->next = 0;
                 items->size++;
                 return NULL;
         }
@@ -182,8 +185,9 @@ void displaySLL(SLL *items, FILE *p){
 	fprintf(p, "{");
 	if(items->size != 0){
 		for(i = 0; i < items->size; i++){
-			items->display(p, curNode->value);
-			fprintf(p, ", ");
+			items->display(curNode->value, p);
+			if(i < items->size-1)
+				fprintf(p, ",");
 			curNode = curNode->next;
 		}
 	}
@@ -196,14 +200,15 @@ void displaySLLdebug(SLL *items,FILE *p){
 	fprintf(p, "head->{");
 	if(items->size != 0){
 		for(i = 0; i < items->size; i++){
-			items->display(p, curNode->value);
-			fprintf(p, ", ");
+			items->display(curNode->value, p);
+			if(i < items->size-1)
+				fprintf(p, ",");
 			curNode = curNode->next;
 		}
 	}
 	fprintf(p, "}, tail->{");
         if(items->size != 0){
-		items->display(p, items->tail->value);
+		items->display(items->tail->value, p);
 	}
 	fprintf(p, "}");
 }
