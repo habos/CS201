@@ -30,6 +30,7 @@ SLL *newSLL(void (*d)(void *,FILE *),void (*f)(void *)){
 
 void insertSLL(SLL *items, int index, void *value){
 	//Create new SLL node with value
+	int i;
 	NODE *newNode = (NODE*)malloc(sizeof(NODE));
 	newNode->value = value;
 	//Set new node next to null
@@ -57,9 +58,8 @@ void insertSLL(SLL *items, int index, void *value){
 	}
 	//Add node to SLL if in middle
 	NODE *curNode = items->head;
-	while(index > 0){
+	for(i = 0; i < index-1; i++) {
 		curNode = curNode->next;
-		index--;
 	}
 	newNode->next = curNode->next;
 	curNode->next = newNode;
