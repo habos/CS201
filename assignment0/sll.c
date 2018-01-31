@@ -74,10 +74,18 @@ void *removeSLL(SLL *items, int index){
 	NODE *prevNode = 0;
 	int i = 0;
 	//Check in node to be removed is head node
+	if(items->size == 1){
+		temp = curNode->value;
+		free(curNode);	
+		items->head = 0;
+		items->tail = 0;
+		items->size = 0;
+		return temp;
+	}
 	if(index == 0){
 		items->head = items->head->next;
 		temp = curNode->value;
-		items->free(curNode->value);
+		//items->free(curNode->value);
 		free(curNode);
 		items->size--;
 		return temp;
@@ -91,7 +99,7 @@ void *removeSLL(SLL *items, int index){
 		items->tail = prevNode;
 		prevNode->next = 0;
 		temp = curNode->value;
-		items->free(curNode->value);
+		//items->free(curNode->value);
 		free(curNode);
 		items->size--;
 		return temp;
@@ -103,15 +111,13 @@ void *removeSLL(SLL *items, int index){
 	}
 	prevNode->next = curNode->next;
 	temp = curNode->value;
-	items->free(curNode->value);
+	//items->free(curNode->value);
 	free(curNode);
 	items->size--;
 	return temp;
 }//end removeSLL
 
 void unionSLL(SLL *recipient, SLL *donor){
-	void *temp = 0;
-	int i;
 	//Check if either SLL is empty
 	if(donor->size == 0){return;}
 	//Make tail of recipient point to head of donor
@@ -124,9 +130,9 @@ void unionSLL(SLL *recipient, SLL *donor){
 	recipient->tail = donor->tail;
 	recipient->size += donor->size;
 	//Remove all the nodes from the donor
-	for(i = 0; i < donor->size; i++){
-		temp = removeSLL(donor, i);
-	}
+	donor->head = 0;
+	donor->tail = 0;
+	donor->size = 0;
 }
 
 void *getSLL(SLL *items, int index){
@@ -152,13 +158,16 @@ void *setSLL(SLL *items, int index, void *value){
 	if(index > items->size || items->size == 0){return 0;}
 	//Check if index is equal to size and needs to be appended
 	if(index == items->size){
+		insertSLL(items, items->size, value);
+	/*
 		NODE *newNode = (NODE*)malloc(sizeof(NODE));
 		newNode->value = value;
                 items->tail->next = newNode;
                 items->tail = newNode;
 		newNode->next = 0;
                 items->size++;
-                return NULL;
+	*/
+                return 0;
         }
 	//Check if index is the tail
 	if(index == items->size-1){
@@ -206,7 +215,7 @@ void displaySLLdebug(SLL *items,FILE *p){
 			curNode = curNode->next;
 		}
 	}
-	fprintf(p, "}, tail->{");
+	fprintf(p, "},tail->{");
         if(items->size != 0){
 		items->display(items->tail->value, p);
 	}
@@ -214,12 +223,17 @@ void displaySLLdebug(SLL *items,FILE *p){
 }
 
 void freeSLL(SLL *items){
-	if(items->size == 0) {return;}
-	NODE *curNode = items->head;
-	while(curNode->next != 0){
-		items->free(curNode->value);
-		free(curNode);
-		curNode = curNode->next;	
+	if(items->size == 0){
+		free(items->head);
+		free(items);
+		return;
+	}
+	NODE *tempNode = 0;
+	while(items->head != 0){
+		tempNode = items->head;
+		items->head = items->head->next;
+		items->free(tempNode->value);
+		free(tempNode);	
 	}
 	free(items);
 }
