@@ -4,6 +4,13 @@
 #include "dll.h"
 #include "stack.h"
 
+/**
+ * Stack data structure using local DLL class.  
+ * 
+ * @author Harry Bos
+ */
+
+//Define stack struct
 typedef struct stack{
 	DLL *dll;
 	void (*display)(void *, FILE *);

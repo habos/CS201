@@ -4,6 +4,13 @@
 #include "sll.h"
 #include "queue.h"
 
+/**
+ * Queue data structure using local DLL class
+ * 
+ * @author Harry Bos
+ */
+
+//Define queue struct
 typedef struct queue{
         SLL *sll;
         void (*display)(void *, FILE *);

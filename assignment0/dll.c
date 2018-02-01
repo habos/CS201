@@ -2,22 +2,34 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "dll.h"
-
+/**
+ * Double Linked List class that includes a DLL and NODE struct.
+ *
+ * @author Harry Bos
+ */
 //Define node struct
 typedef struct node{
         void *value;
         struct node *next;
 	struct node *prev;
-}NODE;//end node stru
+}NODE;//end node struct
 
+//Define DLL struct
 typedef struct dll{
         NODE *head;
         NODE *tail;
         int size;
         void (*display)(void *, FILE *);
         void (*free)(void *);
-}DLL;//end SLL struct
+}DLL;//end DLL struct
 
+/*
+* NAME: newDLL
+*
+* PURPOSE : Construct DLL struct and difine variables
+*
+* RETURN :  DLL struct
+*/
 DLL *newDLL(void (*d)(void *,FILE *),void (*f)(void *)){
         DLL *items = malloc(sizeof(DLL));
         assert(items != 0);
@@ -27,8 +39,15 @@ DLL *newDLL(void (*d)(void *,FILE *),void (*f)(void *)){
         items->display = d;
         items->free = f;
         return items;
-}
+}//end DLL constructor
 
+/*
+* NAME: insertDLL
+*
+* PURPOSE : Insert a node into the SLL struct
+*
+* RETURN : void
+*/
 void insertDLL(DLL *items, int index, void *value){
 	//Create new SLL node with value
 	int i;
@@ -79,8 +98,15 @@ void insertDLL(DLL *items, int index, void *value){
 		curNode->prev = newNode;
 		items->size++;
 	}
-}
+}//end insertDLL
 
+/*
+* NAME: removeDLL
+*
+* PURPOSE : Remove a node from DLL
+*
+* RETURN :  void * = Value of removed node
+*/
 void *removeDLL(DLL *items, int index){
 	void *temp;
 	if(items->size == 0 || index >= items->size) {return 0;}
@@ -136,8 +162,15 @@ void *removeDLL(DLL *items, int index){
 	free(curNode);
 	items->size--;
 	return temp;
-}
+}//end removeDLL
 
+/*
+* NAME: unionDLL
+*
+* PURPOSE : Add the donor to the recipient and empty the donor
+*
+* RETURN :  void
+*/
 void unionDLL(DLL *recipient, DLL *donor){
 	//Check if DLL is empty
 	if(donor->size == 0) {return;}
@@ -154,8 +187,15 @@ void unionDLL(DLL *recipient, DLL *donor){
 	donor->head = 0;
 	donor->tail = 0;
 	donor->size = 0;
-}
+}//end unionDLL
 
+/*
+* NAME: getDLL
+*
+* PURPOSE : Get the value of the node at the given index
+*
+* RETURN :  void *
+*/
 void *getDLL(DLL *items, int index){
 	int i;
 	NODE *curNode = items->head;
@@ -173,8 +213,15 @@ void *getDLL(DLL *items, int index){
 		}
 	}
 	return curNode->value;
-}
+}//end getDLL
 
+/*
+* NAME: setDLL
+*
+* PURPOSE : Set the value of the node at the given index with the given value
+*
+* RETURN :  void *
+*/
 void *setDLL(DLL *items, int index, void *value){
 	int i;
 	void *temp;
@@ -183,15 +230,6 @@ void *setDLL(DLL *items, int index, void *value){
 	if(index > items->size || items->size == 0) {return 0;}
 	//Check if value needs to be comments
 	if(index == items->size){
-		/*
-		NODE *newNode = (NODE*)malloc(sizeof(NODE));
-		newNode->value = value;
-		items->tail->next = newNode;
-		newNode->next = 0;
-		newNode->prev = items->tail;
-		items->tail = newNode;
-		items->size++;
-		*/
 		insertDLL(items, items->size, value);
 		return 0;
 	}
@@ -209,12 +247,25 @@ void *setDLL(DLL *items, int index, void *value){
 	temp = curNode->value;
 	curNode->value = value;
 	return temp;
-}
-
+}//end setDLL
+/*
+* NAME: sizeDLL
+*
+* PURPOSE : Returns the size of the DLL
+*
+* RETURN :  int
+*/
 int sizeDLL(DLL *items){
 	return items->size;
-}
+}//end sizeDLL
 
+/*
+* NAME: displayDLL
+*
+* PURPOSE : Display the DLL
+*
+* RETURN :  void
+*/
 void displayDLL(DLL *items, FILE *p){
 	int i;
 	NODE *curNode = items->head;
@@ -228,8 +279,15 @@ void displayDLL(DLL *items, FILE *p){
 		}
 	}
 	fprintf(p, "}}");
-}
+}//end displayDLL
 
+/*
+* NAME: displayDLLdebug
+*
+* PURPOSE : Display the DLL with head and tail shown
+*
+* RETURN :  void
+*/
 void displayDLLdebug(DLL *items, FILE *p){
 	int i;
 	NODE *curNode = items->head;
@@ -247,8 +305,15 @@ void displayDLLdebug(DLL *items, FILE *p){
 		items->display(items->tail->value, p);
 	}
 	fprintf(p, "}}");
-}
+}//end displayDLLdebug
 
+/*
+* NAME: freeDLL
+*
+* PURPOSE : Free the DLL struct
+*
+* RETURN :  void
+*/
 void freeDLL(DLL *items){
 	if(items->size == 0){
 		free(items);
@@ -262,7 +327,7 @@ void freeDLL(DLL *items){
 		free(tempNode);
 	}
 	free(items);
-}
+}//end freeDLL
 
 
 

@@ -2,13 +2,18 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "sll.h"
-
+/**
+ * Single Linked List class that includes a SLL and NODE struct.  
+ * 
+ * @author Harry Bos
+ */
 //Define node struct
 typedef struct node{
 	void *value;
         struct node *next;
 }NODE;//end node stru
 
+//Define SLL struct
 typedef struct sll{
 	NODE *head;
 	NODE *tail;
@@ -17,6 +22,13 @@ typedef struct sll{
 	void (*free)(void *);
 }SLL;//end SLL struct
 
+/*
+* NAME: newSLL
+*
+* PURPOSE : Construct SLL struct and difine variables
+*
+* RETURN :  SLL struct
+*/
 SLL *newSLL(void (*d)(void *,FILE *),void (*f)(void *)){
 	SLL *items = malloc(sizeof(SLL));
 	assert(items != 0);
@@ -28,6 +40,13 @@ SLL *newSLL(void (*d)(void *,FILE *),void (*f)(void *)){
 	return items;
 }//end constructor
 
+/*
+* NAME: insertSLL
+*
+* PURPOSE : Insert a node into the SLL struct
+*
+* RETURN : void
+*/
 void insertSLL(SLL *items, int index, void *value){
 	//Create new SLL node with value
 	int i;
@@ -66,6 +85,13 @@ void insertSLL(SLL *items, int index, void *value){
 	items->size++;
 }//end insertSLL
 
+/*
+* NAME: removeSLL
+*
+* PURPOSE : Remove a node from SLL
+*
+* RETURN :  Value of removed node
+*/
 void *removeSLL(SLL *items, int index){
 	//Check if SLL is empty
 	void *temp;
@@ -84,8 +110,7 @@ void *removeSLL(SLL *items, int index){
 	}
 	if(index == 0){
 		items->head = items->head->next;
-		temp = curNode->value;
-		//items->free(curNode->value);
+		temp = curNode->value;	
 		free(curNode);
 		items->size--;
 		return temp;
@@ -99,7 +124,6 @@ void *removeSLL(SLL *items, int index){
 		items->tail = prevNode;
 		prevNode->next = 0;
 		temp = curNode->value;
-		//items->free(curNode->value);
 		free(curNode);
 		items->size--;
 		return temp;
@@ -111,12 +135,18 @@ void *removeSLL(SLL *items, int index){
 	}
 	prevNode->next = curNode->next;
 	temp = curNode->value;
-	//items->free(curNode->value);
 	free(curNode);
 	items->size--;
 	return temp;
 }//end removeSLL
 
+/*
+* NAME: unionSLL
+*
+* PURPOSE : Add the donor to the recipient and empty the donor
+*
+* RETURN :  void
+*/
 void unionSLL(SLL *recipient, SLL *donor){
 	//Check if either SLL is empty
 	if(donor->size == 0){return;}
@@ -133,8 +163,14 @@ void unionSLL(SLL *recipient, SLL *donor){
 	donor->head = 0;
 	donor->tail = 0;
 	donor->size = 0;
-}
-
+}//end unionSLL
+/*
+* NAME: getSLL
+*
+* PURPOSE : Get the value of the node at the given index
+*
+* RETURN :  void *
+*/
 void *getSLL(SLL *items, int index){
 	int i;
 	NODE *curNode = items->head;
@@ -148,8 +184,15 @@ void *getSLL(SLL *items, int index){
 	}
 	//Return value
 	return curNode->value;
-}
+}//end getSLL
 
+/*
+* NAME: setSLL
+*
+* PURPOSE : Set the value of the node at the given index with the given value
+*
+* RETURN :  void *
+*/
 void *setSLL(SLL *items, int index, void *value){
 	int i;
 	void *temp;
@@ -159,14 +202,6 @@ void *setSLL(SLL *items, int index, void *value){
 	//Check if index is equal to size and needs to be appended
 	if(index == items->size){
 		insertSLL(items, items->size, value);
-	/*
-		NODE *newNode = (NODE*)malloc(sizeof(NODE));
-		newNode->value = value;
-                items->tail->next = newNode;
-                items->tail = newNode;
-		newNode->next = 0;
-                items->size++;
-	*/
                 return 0;
         }
 	//Check if index is the tail
@@ -182,12 +217,26 @@ void *setSLL(SLL *items, int index, void *value){
 	temp = curNode->value;
 	curNode->value = value;
 	return temp;
-}
+}//end setSLL
 
+/*
+* NAME: sizeSLL
+*
+* PURPOSE : Returns the size of the SLL
+*
+* RETURN :  int
+*/
 int sizeSLL(SLL *items){
 	return items->size;
-}
+}//end sizeSLL
 
+/*
+* NAME: displaySLL
+*
+* PURPOSE : Display the SLL
+*
+* RETURN :  void
+*/
 void displaySLL(SLL *items, FILE *p){
 	int i;
 	NODE *curNode = items->head;
@@ -201,8 +250,15 @@ void displaySLL(SLL *items, FILE *p){
 		}
 	}
 	fprintf(p, "}");
-}
+}//end displaySLL
 
+/*
+* NAME: displaySLLdebug
+*
+* PURPOSE : Display the SLL with head and tail shown
+*
+* RETURN :  void
+*/
 void displaySLLdebug(SLL *items,FILE *p){
 	int i;
 	NODE *curNode = items->head;
@@ -220,8 +276,15 @@ void displaySLLdebug(SLL *items,FILE *p){
 		items->display(items->tail->value, p);
 	}
 	fprintf(p, "}");
-}
+}//end displaySLLdebug
 
+/*
+* NAME: freeSLL
+*
+* PURPOSE : Free the SLL struct
+*
+* RETURN :  void
+*/
 void freeSLL(SLL *items){
 	if(items->size == 0){
 		free(items->head);
@@ -236,7 +299,7 @@ void freeSLL(SLL *items){
 		free(tempNode);	
 	}
 	free(items);
-}
+}//end freeSLL
 
 
 
