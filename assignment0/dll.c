@@ -323,7 +323,8 @@ void freeDLL(DLL *items){
 	while(items->head != 0){
 		tempNode = items->head;
 		items->head = items->head->next;
-		items->free(tempNode->value);
+		if(items->free != 0)
+			items->free(tempNode->value);
 		free(tempNode);
 	}
 	free(items);
