@@ -44,6 +44,12 @@ compareINTEGER(void *v,void *w)
 	return getINTEGER(v) - getINTEGER(w);
 }
 
+int
+compareINTEGERdecr(void *v,void *w)
+{
+        return getINTEGER(w) - getINTEGER(v);
+}
+
 	void
 freeINTEGER(void *v)
 {

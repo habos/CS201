@@ -315,7 +315,7 @@ void displayDLLdebug(DLL *items, FILE *p){
 * RETURN :  void
 */
 void freeDLL(DLL *items){
-	if(items->size == 0){
+	if(items->size == 0 || items->head == 0){
 		free(items);
 		return;
 	}

@@ -18,6 +18,7 @@ typedef struct bstnode{
 //Define BST struct
 typedef struct bst{
 	BSTNODE *root;
+	QUEUE *queue;
 	int size;
 	void (*display)(void *, FILE *);
 	void (*free)(void *);
@@ -78,15 +79,18 @@ void setBSTNODEparent(BSTNODE *n, BSTNODE *replacement){
 }//end setBSTNODEparent
 
 void freeBSTNODE(BSTNODE *n, void (*free)(void *)){
-	if(free != 0)
+	if(n != 0){
 		free(n->value);
-	free(n);
+		free(n);
+	}
 }//end freeBSTNODE
 
 //START BST FUNCTIONS
 
 BST *newBST(void (*d)(void *, FILE *), int (*c)(void *, void *), void (*s)(BSTNODE *, BSTNODE *), void (*f)(void *)){
 	BST *newBST = malloc(sizeof(BST));
+	assert(newBST != 0);
+	newBST->queue = newQUEUE(d, f);
 	assert(newBST != 0);
 	newBST->root = 0;
 	newBST->size = 0;
@@ -115,6 +119,7 @@ BSTNODE *insertBST(BST *t, void *value){
 	BSTNODE *searchNode = t->root;
 	BSTNODE *prevNode = 0;
 	BSTNODE *newNode = newBSTNODE(value);
+	assert(newNode != 0);
 	while(searchNode != 0){
 		prevNode = searchNode;
 		if(t->comparator(newNode->value, searchNode->value) < 0)
@@ -185,12 +190,12 @@ int sizeBST(BST *t){
 void statisticsBST(BST *t, FILE *fp){
 	fprintf(fp, "Nodes: %d\n", t->size);
 	if(t->root == 0){
-        fprintf(fp, "Minimum depth: %d\n", -1);
-        fprintf(fp, "Maximum depth: %d\n", -1);
+		fprintf(fp, "Minimum depth: %d\n", -1);
+		fprintf(fp, "Maximum depth: %d\n", -1);
 	}
 	else{
-	fprintf(fp, "Minimum depth: %d\n", minDepth(t->root));
-	fprintf(fp, "Maximum depth: %d\n", maxDepth(t->root));
+		fprintf(fp, "Minimum depth: %d\n", minDepth(t->root)-1);
+		fprintf(fp, "Maximum depth: %d\n", maxDepth(t->root)-1);
 	}
 }//end statisticsBST
 
@@ -202,17 +207,16 @@ void displayBST(BST *t, FILE *fp){
 
 void displayBSTdebug(BST *t, FILE *fp){
 	if(t->root == 0) return;
-	QUEUE *q = newQUEUE(t->display, t->free);
-	enqueue(q, t->root);
+	enqueue(t->queue, t->root);
 	while(true){
-		int nodeCount = sizeQUEUE(q);
+		int nodeCount = sizeQUEUE(t->queue);
 		if(nodeCount == 0) break;
 		while(nodeCount > 0){
-			BSTNODE *node = dequeue(q);
+			BSTNODE *node = dequeue(t->queue);
 			t->display(node->value, fp);
 			if(nodeCount > 1) fprintf(fp, " ");
-			if(node->left != 0) enqueue(q, node->left);
-			if(node->right != 0) enqueue(q, node->right);
+			if(node->left != 0) enqueue(t->queue, node->left);
+			if(node->right != 0) enqueue(t->queue, node->right);
 			nodeCount--;
 		}
 		fprintf(fp, "\n");
@@ -220,8 +224,14 @@ void displayBSTdebug(BST *t, FILE *fp){
 }//end displayBSTdebug
 
 void freeBST(BST *t){
+	if(t->size == 0){
+		freeQUEUE(t->queue);
+		free(t);
+		return;
+	}
 	BSTNODE *root = t->root;
 	freeBSTNodes(root, t);
+	freeQUEUE(t->queue);
 	free(t);
 }//end freeBST
 
@@ -236,7 +246,7 @@ static void genericSwap(BSTNODE *a, BSTNODE *b){
 
 static int minDepth(BSTNODE *n) {
 	if (n == NULL) return 0;
-	if (n->left == NULL && n->right == NULL) return 1;
+	if (n->left == NULL || n->right == NULL) return 1;
 	if (!n->left) return minDepth(n->right) + 1;
 	if (!n->right) return minDepth(n->left) + 1;
 	if(minDepth(n->left) < minDepth(n->right))

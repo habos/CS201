@@ -286,8 +286,7 @@ void displaySLLdebug(SLL *items,FILE *p){
 * RETURN :  void
 */
 void freeSLL(SLL *items){
-	if(items->size == 0){
-		free(items->head);
+	if(items->size == 0 || items->head == 0){
 		free(items);
 		return;
 	}

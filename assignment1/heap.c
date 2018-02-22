@@ -25,6 +25,7 @@ static bool isLeaf(BSTNODE *n);
 
 HEAP *newHEAP(void (*display)(void *, FILE *), int (*compare)(void *, void *), void (*free)(void *)){
 	HEAP *newHeap = malloc(sizeof(HEAP));
+	assert(newHeap != 0);
 	newHeap->bst = newBST(display, compare, 0, free);
 	newHeap->queue = newQUEUE(display, free);
 	newHeap->stack = newSTACK(display, free);
@@ -37,12 +38,13 @@ HEAP *newHEAP(void (*display)(void *, FILE *), int (*compare)(void *, void *), v
 
 void insertHEAP(HEAP *h, void *value){
 	BSTNODE *newNode = newBSTNODE(value);
+	assert(newNode != 0);
 	BSTNODE *insertNode = 0;
+        h->size++;
+        setBSTsize(h->bst, h->size);
 	if(getBSTroot(h->bst) == 0){
 		setBSTroot(h->bst, newNode);
 		enqueue(h->queue, newNode);
-		h->size++;
-		setBSTsize(h->bst, h->size);
 		return;	
 	}
 	while(true){
@@ -62,51 +64,57 @@ void insertHEAP(HEAP *h, void *value){
 		}
 		dequeue(h->queue);
 	}
-	h->size++;
-	setBSTsize(h->bst, h->size);
 }//end insertHEAP
 
 void buildHEAP(HEAP *h){
 	if(getBSTroot(h->bst) == 0 || isLeaf(getBSTroot(h->bst))) return;
 	BSTNODE *curNode = 0;
 	while(sizeSTACK(h->stack) > 0){
-		curNode = pop(h->stack);
+	curNode = pop(h->stack);
 		heapify(h, curNode);
 	}
 }//end buildHEAP
 
 void *peekHEAP(HEAP *h){
+	if(sizeBST(h->bst) == 0)
+		return 0;
 	return getBSTNODEvalue(getBSTroot(h->bst));
 }
 
 void *extractHEAP(HEAP *h){
-	printf("djfkal");
-	STACK *tempStack = newSTACK(h->display, h->free);
-	printf("fdfffff");
 	if(getBSTroot(h->bst) == 0) return 0;
+        STACK *tempStack = newSTACK(h->display, h->free);
 	void *temp = getBSTNODEvalue(getBSTroot(h->bst));
-	printf("fdsafds");
 	BSTNODE *curNode = getBSTroot(h->bst);
 	int n = h->size;
-	printf("fdsafs");
-	while(n > 0){
+	while(n > 1){
 		push(tempStack, newINTEGER(n%2));
-		printf("fdsafdsss");
 		n = n/2;
 	}
-	printf("%d", sizeSTACK(tempStack));
+	int checkDir = -1;
 	while(sizeSTACK(tempStack) > 0){
-		if(0 == getINTEGER(pop(tempStack))){
+		void *temp2 = pop(tempStack);
+		int plz = getINTEGER(temp2);
+		if(0 == plz){
 			curNode = getBSTNODEleft(curNode);
+			checkDir = 0;
 		}
-		if(1 == getINTEGER(pop(tempStack)))
+		if(1 == plz){
 			curNode = getBSTNODEright(curNode);
+			checkDir = 1;
+		}
+		free(temp2);
 	} 
 	setBSTNODEvalue(getBSTroot(h->bst), getBSTNODEvalue(curNode));
-	freeBSTNODE(curNode, h->free);
+	if(checkDir == 0)
+		setBSTNODEleft(getBSTNODEparent(curNode), 0);
+	if(checkDir == 1)
+		setBSTNODEright(getBSTNODEparent(curNode), 0);
 	h->size--;
 	setBSTsize(h->bst, h->size);
 	heapify(h, getBSTroot(h->bst));
+	freeSTACK(tempStack);
+	free(curNode);
 	return temp;
 }
 
@@ -125,7 +133,23 @@ void displayHEAPdebug(HEAP *h, FILE *fp){
 }//end displayHEAPdebug
 
 void freeHEAP(HEAP *h){
+	void *f = 0;
+	while(sizeQUEUE(h->queue) > 0){
+		f = dequeue(h->queue);
+	}
+  	while(sizeSTACK(h->stack) > 0){
+                f = pop(h->stack);
+        }
+	f = f;
+	if(h->size == 0){
+		freeBST(h->bst);
+		freeQUEUE(h->queue);
+		freeSTACK(h->stack);
+		free(h);
+		return;
+	}
 	freeBST(h->bst);
+	freeSTACK(h->stack);	
 	freeQUEUE(h->queue);
 	free(h);
 }

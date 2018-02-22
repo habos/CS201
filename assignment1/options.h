@@ -2,7 +2,7 @@
 #define __OPTIONS_INCLUDED__
 
 typedef struct ConfigOpts {
-    int sflag, rflag, dflag, vflag;
+    int sflag, rflag, dflag, vflag, iflag, pflag;
     int optind;
     char *fname;
 } ConfigOpts;

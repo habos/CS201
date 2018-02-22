@@ -9,10 +9,10 @@
 
 ConfigOpts *getOptions(int argc, char **argv){
 	ConfigOpts *config = (ConfigOpts*)malloc(sizeof(ConfigOpts));
-	config->vflag = config->rflag = config->sflag = config->dflag = 0;
+	config->vflag = config->rflag = config->sflag = config->dflag = config->iflag = config->pflag = 0;
 	config->fname = 0;
 	int num;
-	while((num = getopt(argc, argv, "vrsd")) != -1) {
+	while((num = getopt(argc, argv, "vrsDiI")) != -1) {
 		switch(num){
 			case 'v':
 				config->vflag = 1;
@@ -20,11 +20,17 @@ ConfigOpts *getOptions(int argc, char **argv){
 			case 'r':
 				config->rflag = 1;
 				break;
-			case 'p':
+			case 's':
 				config->sflag = 1;
 				break;
-			case 'd':
+			case 'D':
 				config->dflag = 1;
+				break;
+			case 'i':
+				config->iflag = 1;
+				break;
+			case 'I':
+				config->pflag = 1;
 				break;
 		}
 	}
